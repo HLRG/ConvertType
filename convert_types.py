@@ -49,10 +49,16 @@ class Init:
 		type_to_option = Tkinter.OptionMenu(frame, self.type_to_var, *self.type_to_options)
 		type_to_option.grid(row = 2, column = 1, sticky = Tkinter.W)
 		
+		default_value_frame = Tkinter.Frame(frame)
+		default_value_frame.grid(row = 3, column = 1, sticky = Tkinter.W)
+		
 		Tkinter.Label(frame, text = "Default Value:").grid(row = 3, column = 0, sticky = Tkinter.W)
-		self.default_value_entry = Tkinter.Entry(frame, width = 10)
-		self.default_value_entry.grid(row = 3, column = 1, sticky = Tkinter.W)
+		self.default_value_entry = Tkinter.Entry(default_value_frame, width = 10)
+		self.default_value_entry.grid(row = 0, column = 0, sticky = Tkinter.W)
 		self.default_value_entry.insert(0, "0")
+		Tkinter.Button(default_value_frame, text = "?  ", command = self.show_help).grid(row = 0, column = 1, sticky = Tkinter.W)
+		
+		
 		
 		Tkinter.Button(frame, text = "Convert!", command = self.outer).grid(row = 4, column = 1, sticky = Tkinter.E)
 		
@@ -78,6 +84,16 @@ class Init:
 	def get_out_type(self):
 		return self.type_to_var.get().split()[0].strip()
 		
+	def show_help(self):
+		msg = "The default value is used when the conversion to an integral " +\
+		"type fails.\n\n" + \
+		"Ex: -inf, NaN -> to any integral type\n" + \
+		"Ex: negative (-65000) -> unsigned integer (ex. 12 unsigned short)"
+		top = Tkinter.Toplevel()
+		txt = Tkinter.Text(top, width = 100)
+		txt.insert(Tkinter.END, msg)
+		txt.update()
+		txt.pack()
 		
 	"""
 	1 = Byte: 8-bit unsigned integer
@@ -146,6 +162,10 @@ class Init:
 				tkMessageBox.showerror("Error", "input and output directories must be different.")
 				return
 			
+			if not(os.path.exists(out_dir)):
+				tkMessageBox.showerror("Error", out_dir + " does not exist.")
+				return
+			
 			for f in os.listdir(indir):
 				if not(f.endswith(".hdr")) and not(os.path.isdir(os.path.join(indir, f))):
 					self.go(os.path.join(indir, f), outdir, defval)
@@ -160,7 +180,6 @@ class Init:
 		
 	def go(self, in_dat_path, out_dir, def_val):
 		
-		print("go...")
 		in_hdr_path = ""
 		
 		if in_dat_path.rfind(".") == -1:
@@ -170,17 +189,13 @@ class Init:
 			in_hdr_path = base + ".hdr"
 		
 		if not(os.path.exists(in_hdr_path)):
-			tkMessageBox.showerror("Error", in_hdr_path + " does not exist.")
+			#tkMessageBox.showerror("Error", in_hdr_path + " does not exist.")
 			return
 			
 		if not(os.path.exists(in_dat_path)):
-			tkMessageBox.showerror("Error", in_dat_path + " does not exist.")
+			#tkMessageBox.showerror("Error", in_dat_path + " does not exist.")
 			return
 		
-		if not(os.path.exists(out_dir)):
-			tkMessageBox.showerror("Error", out_dir + " does not exist.")
-			return
-			
 		out_dat_path = os.path.join(out_dir, ntpath.basename(in_dat_path))
 		out_hdr_path = os.path.join(out_dir, ntpath.basename(in_hdr_path))
 		

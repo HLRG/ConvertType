@@ -162,8 +162,8 @@ class Init:
 				tkMessageBox.showerror("Error", "input and output directories must be different.")
 				return
 			
-			if not(os.path.exists(out_dir)):
-				tkMessageBox.showerror("Error", out_dir + " does not exist.")
+			if not(os.path.exists(outdir)):
+				tkMessageBox.showerror("Error", outdir + " does not exist.")
 				return
 			
 			for f in os.listdir(indir):
